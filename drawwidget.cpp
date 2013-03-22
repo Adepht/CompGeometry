@@ -49,7 +49,7 @@ void DrawWidget::paintEvent(QPaintEvent *event)
     std::vector<QPointF>* vec = _algo->GetVectorR();
     QPointF p = _algo->GetBotleft();
     qint32 n = _algo->GetCur();
-    //painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::Antialiasing);
 
     QRectF r = Adjust(ToSquare(_algo->GetRect()));
 //    painter.drawRect(_algo->GetRect());
@@ -66,6 +66,12 @@ void DrawWidget::paintEvent(QPaintEvent *event)
             painter.drawPoint(t);
 
         }
+        p = PointInRect(r, p);;
+        painter.setPen(Qt::blue);
+        painter.drawEllipse(p, 3, 3);
+        painter.drawPoint(p);
+        painter.setPen(Qt::black);
+
         break;
     case STEP:
         QString s;
@@ -87,14 +93,39 @@ void DrawWidget::paintEvent(QPaintEvent *event)
 
             if (i > n)
                 painter.setPen(Qt::black);
+            if (i == 0)
+                painter.setPen(Qt::blue);
             painter.drawEllipse(t, 3, 3);
             painter.drawPoint(t);
+            if (i == 0)
+                painter.setPen(Qt::red);
 
         }
         painter.setPen(Qt::black);
         break;
     }
 }
+
+void DrawWidget::mousePressEvent(QMouseEvent *event)
+{
+    QRectF r = Adjust(ToSquare(_algo->GetRect()));
+    //PrintQRect(r);
+    QPointF a = event->posF();
+
+    switch (event->button())
+    {
+    case Qt::LeftButton:
+        a = RPointInRect(r, a);
+//        std::cout << a.x() << " " << a.y() << std::endl;
+        _algo->AddPoint(a);
+        this->repaint();
+        break;
+    case Qt::RightButton:
+        break;
+    }
+}
+
+
 
 void DrawWidget::setAlgo(Algorithm *a)
 {
@@ -106,5 +137,13 @@ QPointF DrawWidget::PointInRect(QRectF r, QPointF p)
     QPointF ans;
     ans.setX(this->width() * (p.x() - r.topLeft().x()) / r.width());
     ans.setY(this->height() * (1 - (p.y() - r.topLeft().y()) / r.height()));
+    return ans;
+}
+
+QPointF DrawWidget::RPointInRect(QRectF r, QPointF p)
+{
+    QPointF ans;
+    ans.setX(r.topLeft().x() + r.width() * p.x() / this->width());
+    ans.setY(r.topLeft().y() + r.height() * (this->height() - p.y()) / this->height());
     return ans;
 }

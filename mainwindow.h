@@ -29,11 +29,13 @@ public slots:
     void NextClicked();
     void FirstClicked();
     void LastClicked();
+    void AddPointsClicked();
 private:
     void ShowExtraButtons(bool f);
     Algorithm _algo;
     QGridLayout _mainL, _buttonL, _pnL;
     QPushButton _open, _exec, _exit;
+    QPushButton _addPoints;
     QPushButton _next, _prev;
     QPushButton _toFirst, _toLast;
     DrawWidget _drawer;

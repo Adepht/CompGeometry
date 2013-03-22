@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     , _open("Open...")
     , _exec("Build")
     , _exit("Exit")
+    , _addPoints("Add points...")
     , _next(">")
     , _prev("<")
     , _toFirst("<<")
@@ -15,9 +16,10 @@ MainWindow::MainWindow(QWidget *parent)
     _mainL.addLayout(&_pnL, 1, 0, 2, 1);
     _mainL.addWidget(&_drawer, 0, 0);
     _buttonL.addWidget(&_exec, 0, 0);
-    _buttonL.addWidget(&_open, 1, 0);
-    _buttonL.addWidget(new QWidget(), 2, 0);
-    _buttonL.addWidget(&_exit, 3, 0);
+    _buttonL.addWidget(&_addPoints, 1, 0);
+    _buttonL.addWidget(&_open, 2, 0);
+    _buttonL.addWidget(new QWidget(), 3, 0);
+    _buttonL.addWidget(&_exit, 4, 0);
 
     _pnL.addWidget(new QWidget(), 0, 0);
     _pnL.addWidget(&_toFirst, 0, 1);
@@ -31,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(&_exit, SIGNAL(clicked()), this, SLOT(close()));
     QObject::connect(&_exec, SIGNAL(clicked()), this, SLOT(BuildAlgo()));
     QObject::connect(&_open, SIGNAL(clicked()), this, SLOT(OpenFile()));
-
+    QObject::connect(&_addPoints, SIGNAL(clicked()), this, SLOT(AddPointsClicked()));
 
     QObject::connect(&_next, SIGNAL(clicked()), this, SLOT(NextClicked()));
     QObject::connect(&_prev, SIGNAL(clicked()), this, SLOT(PrevClicked()));
@@ -54,9 +56,10 @@ void MainWindow::BuildAlgo()
         for (int i=0;i<vec->size();++i)
             std::cout << (*vec)[i].x() << " " << (*vec)[i].y() << std::endl;
         */
-        std::cout << _algo.GetRect().width() << " " << _algo.GetRect().height() << std::endl;
-        std::cout << std::flush;
+//        std::cout << _algo.GetRect().width() << " " << _algo.GetRect().height() << std::endl;
+//        std::cout << std::flush;
     }
+    _drawer.repaint();
 }
 
 void MainWindow::OpenFile()
@@ -102,6 +105,13 @@ void MainWindow::FirstClicked()
 void MainWindow::LastClicked()
 {
     _algo.SkipForward();
+    _drawer.repaint();
+}
+
+void MainWindow::AddPointsClicked()
+{
+    _algo.ResetToAdd();
+    ShowExtraButtons(false);
     _drawer.repaint();
 }
 

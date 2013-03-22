@@ -45,6 +45,7 @@ public:
 
 
     AlgoState GetState();
+    void ResetToAdd();
     QPointF GetBotleft();
     QRectF GetRect();
     qint32 GetStepNum();
@@ -74,7 +75,7 @@ private:
 
     std::vector<Action> _flow;
     qint32 _flowit;
-    std::vector<qreal> _stackI;
+
 };
 
 #endif // ALGORITHM_H

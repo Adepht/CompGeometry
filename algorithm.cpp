@@ -2,6 +2,9 @@
 
 bool PointCompare(QPointF a, QPointF b)
 {
+    if (a.x() * b.y() - a.y() * b.x() == 0)
+        return a.manhattanLength() < b.manhattanLength();
+
     return a.x() * b.y() - a.y() * b.x() > 0;
 }
 
@@ -89,7 +92,7 @@ int Algorithm::Build()
     }
     //GRAHAMEND
     _flowit = _flow.size() - 1;
-//    SkipBack(); //Makes algo reset after building command list, TODO
+//    SkipBack();
     _state = STEP;
     return 0;
 }
@@ -175,6 +178,17 @@ AlgoState Algorithm::GetState()
     return _state;
 }
 
+void Algorithm::ResetToAdd()
+{
+
+    _flow.push_back(Action(SET_I));
+    _flow.clear();
+    if (_state > INIT)
+        for (int i = 0;i < _data.size(); ++i)
+            _data[i] += _botleft;
+    _state = INIT;
+}
+
 QPointF Algorithm::GetBotleft()
 {
     return _botleft;
@@ -226,4 +240,6 @@ Action::Action(Operation a)
     static qint32 i(0);
     if (_oper == STEPARATOR)
         _fwd = i++;
+    if (_oper == SET_I)
+        i = 0;
 }
