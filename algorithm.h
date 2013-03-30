@@ -37,8 +37,8 @@ class Algorithm : public QObject
 public:
     Algorithm();
 
-    int AddPoint(QPointF point);
-    int AddPoint(qreal x, qreal y);
+    int AddPoint(QPointF point, bool a = false);
+    int AddPoint(qreal x, qreal y, bool a = false);
     int Init();
     int Build();
     void Reset();

@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     , _exec("Build")
     , _exit("Exit")
     , _addPoints("Add points...")
+    , _save("Save...")
     , _next(">")
     , _prev("<")
     , _toFirst("<<")
@@ -18,8 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     _buttonL.addWidget(&_exec, 0, 0);
     _buttonL.addWidget(&_addPoints, 1, 0);
     _buttonL.addWidget(&_open, 2, 0);
-    _buttonL.addWidget(new QWidget(), 3, 0);
-    _buttonL.addWidget(&_exit, 4, 0);
+    _buttonL.addWidget(&_save, 3, 0);
+    _buttonL.addWidget(new QWidget(), 9, 0);
+    _buttonL.addWidget(&_exit, 10, 0);
 
     _pnL.addWidget(new QWidget(), 0, 0);
     _pnL.addWidget(&_toFirst, 0, 1);
@@ -33,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(&_exit, SIGNAL(clicked()), this, SLOT(close()));
     QObject::connect(&_exec, SIGNAL(clicked()), this, SLOT(BuildAlgo()));
     QObject::connect(&_open, SIGNAL(clicked()), this, SLOT(OpenFile()));
+    QObject::connect(&_save, SIGNAL(clicked()), this, SLOT(SaveToFile()));
     QObject::connect(&_addPoints, SIGNAL(clicked()), this, SLOT(AddPointsClicked()));
 
     QObject::connect(&_next, SIGNAL(clicked()), this, SLOT(NextClicked()));
@@ -81,6 +84,27 @@ void MainWindow::OpenFile()
         in >> x >> y;
         _algo.AddPoint(x, y);
     }
+}
+
+void MainWindow::SaveToFile()
+{
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save to File"));
+    if (filename.isEmpty())
+        return;
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    _algo.ResetToAdd();
+    QTextStream out(&file);
+    std::vector<QPointF> *vec = _algo.GetVectorR();
+    out << vec->size();
+    for (int i = 0; i < vec->size(); ++i)
+    {
+        out << (*vec)[i].x() << " " << (*vec)[i].y() << "\n";
+    }
+    out.flush();
+    _algo.Build();
+    _drawer.repaint();
 }
 
 void MainWindow::PrevClicked()

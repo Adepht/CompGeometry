@@ -25,6 +25,7 @@ signals:
 public slots:
     void BuildAlgo();
     void OpenFile();
+    void SaveToFile();
     void PrevClicked();
     void NextClicked();
     void FirstClicked();
@@ -35,7 +36,7 @@ private:
     Algorithm _algo;
     QGridLayout _mainL, _buttonL, _pnL;
     QPushButton _open, _exec, _exit;
-    QPushButton _addPoints;
+    QPushButton _addPoints, _save;
     QPushButton _next, _prev;
     QPushButton _toFirst, _toLast;
     DrawWidget _drawer;

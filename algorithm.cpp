@@ -14,10 +14,14 @@ Algorithm::Algorithm()
 {
 }
 
-int Algorithm::AddPoint(QPointF point)
+int Algorithm::AddPoint(QPointF point, bool a)
 {
     if (_state != INIT)
         return (int)_state;
+    if (a)
+        for (int i = 0; i < _data.size(); ++i)
+            if (point == _data[i])
+                return -1;
     if (_data.size() == 0)
     {
         _rect = QRectF(point - QPointF(1, 1), point + QPointF(1, 1));
@@ -29,9 +33,9 @@ int Algorithm::AddPoint(QPointF point)
         _botleft = point;
 }
 
-int Algorithm::AddPoint(qreal x, qreal y)
+int Algorithm::AddPoint(qreal x, qreal y, bool a)
 {
-    return AddPoint(QPointF(x, y));
+    return AddPoint(QPointF(x, y), a);
 }
 
 int Algorithm::Init()
@@ -44,6 +48,20 @@ int Algorithm::Init()
     for (int i = 0; i < n; ++i)
         _data[i] -= _botleft;
     std::sort(_data.begin(), _data.end(), PointCompare);
+    int a = 0, b = 1;
+    while (b < _data.size())
+    {
+        if (_data[a] != _data[b])
+        {
+            ++a;
+            std::swap(_data[a], _data[b]);
+        }
+        ++b;
+    }
+    ++a;
+    _data.resize(a);
+    n=_data.size();
+    //for
     _i = 3;
     _cur = 2;
     _state = BUILD;
@@ -111,6 +129,7 @@ void Algorithm::Reset()
 {
     _state = INIT;
     _data.clear();
+    _flow.push_back(Action(SET_I));
     _flow.clear();
 }
 
